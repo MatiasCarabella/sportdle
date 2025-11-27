@@ -1,0 +1,105 @@
+###############################################
+# SPORTDLE API - F1 WORDLE
+# Quick Reference for Testing
+###############################################
+
+### Health Check
+GET http://localhost:3000/api
+
+### Register a new user
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Get Profile (Protected - requires JWT)
+GET http://localhost:3000/api/auth/profile
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### Refresh Token
+POST http://localhost:3000/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refresh_token": "YOUR_REFRESH_TOKEN_HERE"
+}
+
+### Google OAuth Login (Open in browser)
+GET http://localhost:3000/api/auth/google
+
+###############################################
+# GAME ENDPOINTS
+###############################################
+
+### Get Today's Puzzle (Public)
+GET http://localhost:3000/api/game/today
+
+### Validate a Guess (Public)
+POST http://localhost:3000/api/game/validate
+Content-Type: application/json
+
+{
+  "puzzleDate": "2025-11-27",
+  "guess": "PROST"
+}
+
+### Validate Another Guess
+POST http://localhost:3000/api/game/validate
+Content-Type: application/json
+
+{
+  "puzzleDate": "2025-11-27",
+  "guess": "SENNA"
+}
+
+### Submit Game Result (Protected)
+POST http://localhost:3000/api/game/submit
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "puzzleDate": "2025-11-27",
+  "won": true,
+  "attempts": 4
+}
+
+### Get User Stats (Protected)
+GET http://localhost:3000/api/game/stats
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+###############################################
+# ADMIN ENDPOINTS
+###############################################
+
+### List All Puzzles (Protected - Admin)
+GET http://localhost:3000/api/admin/puzzles
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### Get Puzzle by Date (Protected - Admin)
+GET http://localhost:3000/api/admin/puzzles/2025-11-27
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+
+### Create Puzzle (Protected - Admin)
+POST http://localhost:3000/api/admin/puzzle
+Authorization: Bearer YOUR_ACCESS_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "word": "SENNA",
+  "date": "2025-11-27",
+  "category": "driver",
+  "hint": "Brazilian F1 legend",
+  "difficulty": "easy"
+}

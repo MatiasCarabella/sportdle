@@ -1,99 +1,199 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏎️ Sportdle API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure RESTful API for an F1-themed Wordle game built with NestJS and MongoDB. Features JWT authentication, Google OAuth 2.0, daily F1 puzzles (drivers, teams, circuits, terms), and comprehensive user statistics tracking. The API uses server-side validation to prevent cheating - the word is never exposed to the frontend.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+[![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-8.x-47A248?logo=mongodb)](https://www.mongodb.com/)
 
-## Description
+## ✨ Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 🔐 **Authentication:** JWT tokens + Google OAuth 2.0
+- 🎮 **Daily Puzzles:** F1-themed 5-letter words (drivers, teams, circuits, terms)
+- 🛡️ **Secure Validation:** Server-side guess checking (word never exposed)
+- 📊 **Statistics:** Games played, win rate, streaks, guess distribution
+- ✅ **Production Ready:** Input validation, error handling, CORS, TypeScript
 
-## Project setup
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- MongoDB Atlas account (or local MongoDB)
+- Google Cloud Console account (for OAuth)
+
+### Installation
 
 ```bash
-$ npm install
+# Clone and install
+git clone <your-repo-url>
+cd sportdle
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your MongoDB URI and Google OAuth credentials
 ```
 
-## Compile and run the project
+### Environment Variables
+
+```env
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/Sportdle
+JWT_SECRET=your-secret-key
+JWT_REFRESH_SECRET=your-refresh-secret
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+PORT=3000
+```
+
+### Run
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Run tests
+API available at: **http://localhost:3000/api**
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - Register with email/password
+- `POST /api/auth/login` - Login with email/password
+- `POST /api/auth/refresh` - Refresh access token
+- `GET /api/auth/profile` - Get current user (protected)
+- `GET /api/auth/google` - Initiate Google OAuth
+- `GET /api/auth/google/callback` - Google OAuth callback
+
+### Game
+- `GET /api/game/today` - Get today's puzzle metadata
+- `POST /api/game/validate` - Validate a guess (returns color pattern)
+- `POST /api/game/submit` - Submit final game result (protected)
+- `GET /api/game/stats` - Get user statistics (protected)
+
+### Admin
+- `POST /api/admin/puzzle` - Create new puzzle (protected)
+- `GET /api/admin/puzzles` - List all puzzles (protected)
+- `GET /api/admin/puzzles/:date` - Get puzzle by date (protected)
+
+📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/your-collection-id)**
+
+## 🎮 How It Works
+
+```
+1. Frontend gets puzzle metadata (no word!)
+   GET /api/game/today
+   
+2. User makes a guess
+   POST /api/game/validate { guess: "SENNA" }
+   
+3. Backend returns color pattern
+   { result: [🟩🟩🟩🟩🟩], isCorrect: true }
+   
+4. Repeat until solved or 6 attempts
+   
+5. Submit final result
+   POST /api/game/submit { won: true, attempts: 3 }
+```
+
+**Why server-side validation?**
+- 🛡️ Prevents cheating (word stays secret)
+- ✅ Consistent validation across all clients
+- 📊 Track all guesses for analytics
+
+## 🔧 Tech Stack
+
+- **Framework:** NestJS 10.x
+- **Database:** MongoDB with Mongoose
+- **Language:** TypeScript 5.x
+- **Authentication:** JWT, Passport, Google OAuth 2.0
+- **Validation:** class-validator, class-transformer
+- **Security:** bcrypt password hashing
+
+## 📁 Project Structure
+
+```
+src/
+├── auth/           # Authentication (JWT, Google OAuth)
+├── user/           # User management (internal)
+├── game/           # Game logic and validation
+├── admin/          # Admin endpoints
+└── main.ts         # Application entry point
+```
+
+## 🔐 Google OAuth Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create OAuth 2.0 credentials
+3. Add redirect URI: `http://localhost:3000/api/auth/google/callback`
+4. Copy Client ID and Secret to `.env`
+
+[Detailed setup guide →](https://developers.google.com/identity/protocols/oauth2)
+
+## 🧪 Testing
 
 ```bash
-# unit tests
-$ npm run test
+# Build
+npm run build
 
-# e2e tests
-$ npm run test:e2e
+# Run tests
+npm run test
 
-# test coverage
-$ npm run test:cov
+# E2E tests
+npm run test:e2e
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+**Quick API Test:**
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Register
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@f1.com","password":"password123"}'
+
+# Get today's puzzle
+curl http://localhost:3000/api/game/today
+
+# Validate a guess
+curl -X POST http://localhost:3000/api/game/validate \
+  -H "Content-Type: application/json" \
+  -d '{"puzzleDate":"2025-11-27","guess":"SENNA"}'
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📊 Data Models
 
-## Resources
+**Puzzle:**
+```typescript
+{
+  word: "SENNA",
+  date: "2025-11-27",
+  category: "driver",
+  hint: "Brazilian legend",
+  difficulty: "easy"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+**User Stats:**
+```typescript
+{
+  gamesPlayed: 10,
+  gamesWon: 8,
+  currentStreak: 3,
+  maxStreak: 5,
+  guessDistribution: { 1: 0, 2: 1, 3: 3, 4: 2, 5: 1, 6: 1 }
+}
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🤝 Contributing
 
-## Support
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📝 License
 
-## Stay in touch
+UNLICENSED
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🐛 Issues
 
-## License
+Found a bug? [Open an issue](https://github.com/your-username/sportdle/issues)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+---
+
+Built with ❤️ using NestJS
