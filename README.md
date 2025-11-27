@@ -5,6 +5,7 @@ A secure RESTful API for an F1-themed Wordle game built with NestJS and MongoDB.
 [![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs)](https://nestjs.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.x-47A248?logo=mongodb)](https://www.mongodb.com/)
+[![Postman](https://img.shields.io/badge/Postman-Docs-FF6C37?logo=postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)
 
 ## ✨ Features
 
@@ -75,7 +76,7 @@ API available at: **http://localhost:3000/api**
 - `GET /api/admin/puzzles` - List all puzzles (protected)
 - `GET /api/admin/puzzles/:date` - Get puzzle by date (protected)
 
-📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/your-collection-id)**
+📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)**
 
 ## 🎮 How It Works
 
@@ -130,6 +131,18 @@ src/
 [Detailed setup guide →](https://developers.google.com/identity/protocols/oauth2)
 
 ## 🧪 Testing
+
+### Postman Collection
+
+Import `Sportdle.postman_collection.json` into Postman for a complete testing experience with:
+- Pre-configured requests for all endpoints
+- Automatic token management
+- Example responses
+- Environment variables
+
+[View Documentation →](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)
+
+### Manual Testing
 
 ```bash
 # Build
