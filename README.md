@@ -73,7 +73,7 @@ API available at: **http://localhost:3000/api**
 - `POST /api/game/submit` - Submit final game result (protected)
 - `GET /api/game/stats` - Get user statistics (protected)
 
-### Admin
+### Admin (Requires Admin Role)
 **Puzzle Management:**
 - `POST /api/admin/puzzles` - Create new puzzle (auto-assigns next date if omitted)
 - `GET /api/admin/puzzles` - List all puzzles
@@ -84,10 +84,14 @@ API available at: **http://localhost:3000/api**
 **User Management:**
 - `GET /api/admin/users` - Get all users
 - `GET /api/admin/users/:id` - Get user by ID
-- `PATCH /api/admin/users/:id` - Update user
+- `PATCH /api/admin/users/:id` - Update user (including role)
 - `DELETE /api/admin/users/:id` - Delete user
 
 📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)**
+
+**Role Types:**
+- `user` (default) - Can play games, view stats, manage own account
+- `admin` - Full access including puzzle and user management
 
 ## 🎮 How It Works
 

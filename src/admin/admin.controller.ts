@@ -9,6 +9,8 @@ import {
   Delete,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { GameService } from '../game/game.service';
 import { UserService } from '../user/user.service';
 import { CreatePuzzleDto } from '../game/dto/create-puzzle.dto';
@@ -16,7 +18,8 @@ import { UpdatePuzzleDto } from '../game/dto/update-puzzle.dto';
 import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard) // TODO: Add admin role guard for production
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 export class AdminController {
   constructor(
     private readonly gameService: GameService,

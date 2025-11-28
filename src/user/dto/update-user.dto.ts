@@ -8,4 +8,8 @@ export class UpdateUserDto {
   @IsEnum(['email', 'google', 'microsoft', 'github'])
   @IsOptional()
   source?: 'email' | 'google' | 'microsoft' | 'github';
+
+  @IsEnum(['user', 'admin'])
+  @IsOptional()
+  role?: 'user' | 'admin';
 }
