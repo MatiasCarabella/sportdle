@@ -208,7 +208,7 @@ curl -X POST http://localhost:3000/api/game/validate \
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Feel free to submit a Pull Request.
 
 ## 📝 License
 
