@@ -5,18 +5,18 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS
+  // CORS configuration
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true,
   });
 
-  // Add global prefix to all routes except root health check
+  // Global API prefix (excludes health check routes)
   app.setGlobalPrefix('api', {
-    exclude: ['/'],
+    exclude: ['/', 'api'],
   });
 
-  // Enable validation globally
+  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -25,8 +25,12 @@ async function bootstrap() {
     }),
   );
 
+  // Start server
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}/api`);
+  
+  console.log(`🏎️  Sportdle API is running on port ${port}`);
+  console.log(`📚 Documentation: https://documenter.getpostman.com/view/10146128/2sB3dK1Csq`);
 }
+
 bootstrap();

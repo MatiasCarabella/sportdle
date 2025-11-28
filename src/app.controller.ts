@@ -1,11 +1,22 @@
 import { Controller, Get } from '@nestjs/common';
 
+interface HealthCheckResponse {
+  message: string;
+  status: string;
+  version: string;
+  endpoints: {
+    auth: string;
+    game: string;
+    admin: string;
+  };
+  documentation: string;
+  timestamp: string;
+}
+
 @Controller()
 export class AppController {
-  constructor() {}
-
-  @Get()
-  healthCheck(): Object {
+  @Get(['/', 'api'])
+  healthCheck(): HealthCheckResponse {
     return {
       message: 'Sportdle API is running! 🏎️',
       status: 'healthy',
