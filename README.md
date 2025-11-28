@@ -10,9 +10,10 @@ A secure RESTful API for an F1-themed Wordle game built with NestJS and MongoDB.
 ## ✨ Features
 
 - 🔐 **Authentication:** JWT tokens + Google OAuth 2.0
-- 🎮 **Daily Puzzles:** F1-themed 5-letter words (drivers, teams, circuits, terms)
+- 🎮 **Daily Puzzles:** F1-themed words (4-8 letters) - drivers, teams, circuits, terms
 - 🛡️ **Secure Validation:** Server-side guess checking (word never exposed)
 - 📊 **Statistics:** Games played, win rate, streaks, guess distribution
+- 🔧 **Admin Panel:** Full CRUD for puzzles with duplicate prevention
 - ✅ **Production Ready:** Input validation, error handling, CORS, TypeScript
 
 ## 🚀 Quick Start
@@ -61,7 +62,8 @@ API available at: **http://localhost:3000/api**
 - `POST /api/auth/register` - Register with email/password
 - `POST /api/auth/login` - Login with email/password
 - `POST /api/auth/refresh` - Refresh access token
-- `GET /api/auth/profile` - Get current user (protected)
+- `GET /api/auth/me` - Get current user (protected)
+- `POST /api/auth/change-password` - Change password (protected)
 - `GET /api/auth/google` - Initiate Google OAuth
 - `GET /api/auth/google/callback` - Google OAuth callback
 
@@ -72,9 +74,17 @@ API available at: **http://localhost:3000/api**
 - `GET /api/game/stats` - Get user statistics (protected)
 
 ### Admin
-- `POST /api/admin/puzzle` - Create new puzzle (protected)
+- `POST /api/admin/puzzles` - Create new puzzle (protected)
 - `GET /api/admin/puzzles` - List all puzzles (protected)
 - `GET /api/admin/puzzles/:date` - Get puzzle by date (protected)
+- `PATCH /api/admin/puzzles/:id` - Update puzzle by ID (protected)
+- `DELETE /api/admin/puzzles/:id` - Delete puzzle by ID (protected)
+
+### Users
+- `GET /api/users` - Get all users (protected)
+- `GET /api/users/:id` - Get user by ID (protected)
+- `PATCH /api/users/:id` - Update user (protected)
+- `DELETE /api/users/:id` - Delete user (protected)
 
 📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)**
 
@@ -176,11 +186,11 @@ curl -X POST http://localhost:3000/api/game/validate \
 **Puzzle:**
 ```typescript
 {
-  word: "SENNA",
-  date: "2025-11-27",
-  category: "driver",
+  word: "SENNA",           // 4-8 uppercase letters
+  date: "2025-11-27",      // Optional - auto-assigns next available date
+  category: "driver",      // driver | team | circuit | term
   hint: "Brazilian legend",
-  difficulty: "easy"
+  difficulty: "easy"       // easy | medium | hard
 }
 ```
 
@@ -191,7 +201,7 @@ curl -X POST http://localhost:3000/api/game/validate \
   gamesWon: 8,
   currentStreak: 3,
   maxStreak: 5,
-  guessDistribution: { 1: 0, 2: 1, 3: 3, 4: 2, 5: 1, 6: 1 }
+  guessDistribution: { "1": 0, "2": 1, "3": 3, "4": 2, "5": 1, "6": 1 }
 }
 ```
 

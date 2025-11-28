@@ -102,4 +102,33 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
+
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    const user = await this.userService.findOneWithPassword(userId);
+
+    // Verify current password
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    // Check if user registered with email (not OAuth)
+    if (user.source !== 'email') {
+      throw new UnauthorizedException(
+        'Cannot change password for OAuth accounts',
+      );
+    }
+
+    // Update password (will be hashed by schema pre-save hook)
+    user.password = newPassword;
+    await user.save();
+
+    return {
+      message: 'Password changed successfully',
+    };
+  }
 }

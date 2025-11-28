@@ -7,7 +7,7 @@ export interface UserStatsDocument extends Document {
   gamesWon: number;
   currentStreak: number;
   maxStreak: number;
-  guessDistribution: Map<number, number>;
+  guessDistribution: Map<string, number>;
   lastPlayedDate?: Date;
   completedPuzzles: Types.ObjectId[];
 }
@@ -30,7 +30,7 @@ export class UserStats {
   maxStreak: number;
 
   @Prop({ type: Map, of: Number, default: {} })
-  guessDistribution: Map<number, number>;
+  guessDistribution: Map<string, number>;
 
   @Prop()
   lastPlayedDate?: Date;

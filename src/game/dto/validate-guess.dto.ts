@@ -5,7 +5,7 @@ export class ValidateGuessDto {
   puzzleDate: string;
 
   @IsString()
-  @Length(5, 5)
+  @Length(4, 8)
   @Matches(/^[A-Z]+$/, { message: 'Guess must contain only uppercase letters' })
   guess: string;
 }

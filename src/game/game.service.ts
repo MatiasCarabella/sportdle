@@ -25,15 +25,24 @@ export class GameService {
       Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
     );
 
-    const puzzle = await this.dailyPuzzleModel
+    let puzzle = await this.dailyPuzzleModel
       .findOne({ date: todayUTC })
       .select('-word')
       .exec();
 
+    // If no puzzle for today, get a random one
     if (!puzzle) {
-      throw new NotFoundException(
-        `No puzzle available for today (${todayUTC.toISOString().split('T')[0]})`,
-      );
+      const count = await this.dailyPuzzleModel.countDocuments();
+      if (count === 0) {
+        throw new NotFoundException('No puzzles available in database');
+      }
+      
+      const random = Math.floor(Math.random() * count);
+      puzzle = await this.dailyPuzzleModel
+        .findOne()
+        .skip(random)
+        .select('-word')
+        .exec();
     }
 
     return {
@@ -43,6 +52,7 @@ export class GameService {
       hint: puzzle.hint,
       difficulty: puzzle.difficulty,
       wordLength: puzzle.word ? puzzle.word.length : 5,
+      isRandom: puzzle.date.getTime() !== todayUTC.getTime(),
     };
   }
 
@@ -88,8 +98,8 @@ export class GameService {
     if (submitGameDto.won) {
       stats.gamesWon += 1;
 
-      // Update guess distribution
-      const attempts = submitGameDto.attempts;
+      // Update guess distribution (Map requires string keys)
+      const attempts = submitGameDto.attempts.toString();
       const currentCount = stats.guessDistribution.get(attempts) || 0;
       stats.guessDistribution.set(attempts, currentCount + 1);
 
@@ -177,28 +187,65 @@ export class GameService {
   // Admin method to create puzzles
   async createPuzzle(puzzleData: any): Promise<DailyPuzzleDocument> {
     try {
-      // Ensure date is in UTC
-      const puzzleDate = new Date(puzzleData.date);
-      const puzzleDateUTC = new Date(
-        Date.UTC(puzzleDate.getFullYear(), puzzleDate.getMonth(), puzzleDate.getDate()),
-      );
+      const wordUpper = puzzleData.word.toUpperCase();
 
-      // Check if puzzle already exists for this date
-      const existingPuzzle = await this.dailyPuzzleModel.findOne({
-        date: puzzleDateUTC,
+      // Check if this word already exists
+      const existingPuzzleByWord = await this.dailyPuzzleModel.findOne({
+        word: wordUpper,
       });
 
-      if (existingPuzzle) {
+      if (existingPuzzleByWord) {
         throw new BadRequestException(
-          `A puzzle already exists for ${puzzleDateUTC.toISOString().split('T')[0]}. ` +
-          `Existing puzzle: "${existingPuzzle.word}" (${existingPuzzle.category})`,
+          `The word "${wordUpper}" already exists as a puzzle for ${existingPuzzleByWord.date.toISOString().split('T')[0]}. ` +
+          `Please choose a different word.`,
         );
+      }
+
+      let puzzleDateUTC: Date;
+
+      // If no date provided, find the next available date
+      if (!puzzleData.date) {
+        // Get the latest puzzle date
+        const latestPuzzle = await this.dailyPuzzleModel
+          .findOne()
+          .sort({ date: -1 })
+          .exec();
+
+        if (latestPuzzle) {
+          // Add one day to the latest puzzle date
+          puzzleDateUTC = new Date(latestPuzzle.date);
+          puzzleDateUTC.setUTCDate(puzzleDateUTC.getUTCDate() + 1);
+        } else {
+          // No puzzles exist, start from today
+          const today = new Date();
+          puzzleDateUTC = new Date(
+            Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
+          );
+        }
+      } else {
+        // Use provided date
+        const puzzleDate = new Date(puzzleData.date);
+        puzzleDateUTC = new Date(
+          Date.UTC(puzzleDate.getFullYear(), puzzleDate.getMonth(), puzzleDate.getDate()),
+        );
+
+        // Check if puzzle already exists for this date
+        const existingPuzzleByDate = await this.dailyPuzzleModel.findOne({
+          date: puzzleDateUTC,
+        });
+
+        if (existingPuzzleByDate) {
+          throw new BadRequestException(
+            `A puzzle already exists for ${puzzleDateUTC.toISOString().split('T')[0]}. ` +
+            `Existing puzzle: "${existingPuzzleByDate.word}" (${existingPuzzleByDate.category})`,
+          );
+        }
       }
 
       const puzzle = new this.dailyPuzzleModel({
         ...puzzleData,
         date: puzzleDateUTC,
-        word: puzzleData.word.toUpperCase(),
+        word: wordUpper,
       });
 
       return puzzle.save();
@@ -314,6 +361,74 @@ export class GameService {
       guess: guess,
       result: result,
       isCorrect: guess === word,
+    };
+  }
+
+  // Admin method to update a puzzle
+  async updatePuzzle(id: string, updateData: any): Promise<DailyPuzzleDocument> {
+    const puzzle = await this.dailyPuzzleModel.findById(id);
+    
+    if (!puzzle) {
+      throw new NotFoundException(`Puzzle with ID ${id} not found`);
+    }
+
+    // If updating the word, check for duplicates and ensure uppercase
+    if (updateData.word) {
+      const wordUpper = updateData.word.toUpperCase();
+
+      // Check if another puzzle exists with this word (excluding current puzzle)
+      const existingPuzzleByWord = await this.dailyPuzzleModel.findOne({
+        word: wordUpper,
+        _id: { $ne: id },
+      });
+
+      if (existingPuzzleByWord) {
+        throw new BadRequestException(
+          `The word "${wordUpper}" already exists as a puzzle for ${existingPuzzleByWord.date.toISOString().split('T')[0]}. ` +
+          `Please choose a different word.`,
+        );
+      }
+
+      updateData.word = wordUpper;
+    }
+
+    // If updating the date, check for duplicates
+    if (updateData.date) {
+      const newDate = new Date(updateData.date);
+      const newDateUTC = new Date(
+        Date.UTC(newDate.getFullYear(), newDate.getMonth(), newDate.getDate()),
+      );
+
+      // Check if another puzzle exists for this date (excluding current puzzle)
+      const existingPuzzleByDate = await this.dailyPuzzleModel.findOne({
+        date: newDateUTC,
+        _id: { $ne: id },
+      });
+
+      if (existingPuzzleByDate) {
+        throw new BadRequestException(
+          `A puzzle already exists for ${newDateUTC.toISOString().split('T')[0]}. ` +
+          `Existing puzzle: "${existingPuzzleByDate.word}" (${existingPuzzleByDate.category})`,
+        );
+      }
+
+      updateData.date = newDateUTC;
+    }
+
+    Object.assign(puzzle, updateData);
+    return puzzle.save();
+  }
+
+  // Admin method to delete a puzzle
+  async deletePuzzle(id: string): Promise<{ message: string }> {
+    const result = await this.dailyPuzzleModel.findByIdAndDelete(id);
+    
+    if (!result) {
+      throw new NotFoundException(`Puzzle with ID ${id} not found`);
+    }
+
+    return {
+      message: `Puzzle "${result.word}" for ${result.date.toISOString().split('T')[0]} deleted successfully`,
     };
   }
 }
