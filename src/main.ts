@@ -11,8 +11,10 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Add global prefix to all routes
-  app.setGlobalPrefix('api');
+  // Add global prefix to all routes except root health check
+  app.setGlobalPrefix('api', {
+    exclude: ['/'],
+  });
 
   // Enable validation globally
   app.useGlobalPipes(
