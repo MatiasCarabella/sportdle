@@ -2,9 +2,10 @@
 
 A secure RESTful API for an F1-themed Wordle game built with NestJS and MongoDB. Features JWT authentication, Google OAuth 2.0, daily F1 puzzles (drivers, teams, circuits, terms), and comprehensive user statistics tracking. The API uses server-side validation to prevent cheating - the word is never exposed to the frontend.
 
-[![NestJS](https://img.shields.io/badge/NestJS-10.x-E0234E?logo=nestjs)](https://nestjs.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-11.x-E0234E?logo=nestjs)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-8.x-47A248?logo=mongodb)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Postman](https://img.shields.io/badge/Postman-Docs-FF6C37?logo=postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)
 
 ## ✨ Features
@@ -118,9 +119,9 @@ API available at: **http://localhost:3000/api**
 
 ## 🔧 Tech Stack
 
-- **Framework:** NestJS 10.x
-- **Database:** MongoDB with Mongoose
-- **Language:** TypeScript 5.x
+- **Framework:** NestJS 11.x
+- **Database:** MongoDB 8.x with Mongoose
+- **Language:** TypeScript 5.7
 - **Authentication:** JWT, Passport, Google OAuth 2.0
 - **Validation:** class-validator, class-transformer
 - **Security:** bcrypt password hashing
