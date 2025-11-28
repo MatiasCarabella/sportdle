@@ -27,7 +27,7 @@ A secure RESTful API for an F1-themed Wordle game built with NestJS and MongoDB.
 
 ```bash
 # Clone and install
-git clone <your-repo-url>
+git clone https://github.com/MatiasCarabella/sportdle
 cd sportdle
 npm install
 
