@@ -74,17 +74,18 @@ API available at: **http://localhost:3000/api**
 - `GET /api/game/stats` - Get user statistics (protected)
 
 ### Admin
-- `POST /api/admin/puzzles` - Create new puzzle (protected)
-- `GET /api/admin/puzzles` - List all puzzles (protected)
-- `GET /api/admin/puzzles/:date` - Get puzzle by date (protected)
-- `PATCH /api/admin/puzzles/:id` - Update puzzle by ID (protected)
-- `DELETE /api/admin/puzzles/:id` - Delete puzzle by ID (protected)
+**Puzzle Management:**
+- `POST /api/admin/puzzles` - Create new puzzle (auto-assigns next date if omitted)
+- `GET /api/admin/puzzles` - List all puzzles
+- `GET /api/admin/puzzles/:date` - Get puzzle by date
+- `PATCH /api/admin/puzzles/:id` - Update puzzle by ID
+- `DELETE /api/admin/puzzles/:id` - Delete puzzle by ID
 
-### Users
-- `GET /api/users` - Get all users (protected)
-- `GET /api/users/:id` - Get user by ID (protected)
-- `PATCH /api/users/:id` - Update user (protected)
-- `DELETE /api/users/:id` - Delete user (protected)
+**User Management:**
+- `GET /api/admin/users` - Get all users
+- `GET /api/admin/users/:id` - Get user by ID
+- `PATCH /api/admin/users/:id` - Update user
+- `DELETE /api/admin/users/:id` - Delete user
 
 📚 **[Full API Documentation (Postman)](https://documenter.getpostman.com/view/10146128/2sB3dK1Csq)**
 

@@ -10,14 +10,20 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GameService } from '../game/game.service';
+import { UserService } from '../user/user.service';
 import { CreatePuzzleDto } from '../game/dto/create-puzzle.dto';
 import { UpdatePuzzleDto } from '../game/dto/update-puzzle.dto';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard) // TODO: Add admin role guard for production
 export class AdminController {
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly gameService: GameService,
+    private readonly userService: UserService,
+  ) {}
 
+  // Puzzle Management
   @Post('puzzles')
   createPuzzle(@Body() createPuzzleDto: CreatePuzzleDto) {
     return this.gameService.createPuzzle(createPuzzleDto);
@@ -41,5 +47,26 @@ export class AdminController {
   @Delete('puzzles/:id')
   deletePuzzle(@Param('id') id: string) {
     return this.gameService.deletePuzzle(id);
+  }
+
+  // User Management
+  @Get('users')
+  findAllUsers() {
+    return this.userService.findAll();
+  }
+
+  @Get('users/:id')
+  findOneUser(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
+
+  @Patch('users/:id')
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(id, updateUserDto);
+  }
+
+  @Delete('users/:id')
+  removeUser(@Param('id') id: string) {
+    return this.userService.remove(id);
   }
 }
