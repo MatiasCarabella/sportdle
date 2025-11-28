@@ -7,6 +7,7 @@ export interface UserDocument extends Document {
   password?: string;
   source: string;
   googleId?: string;
+  role: string;
   createdAt: Date;
   comparePassword(plainTextPassword: string): Promise<boolean>;
 }
@@ -24,6 +25,9 @@ export class User {
 
   @Prop({ required: false, unique: true, sparse: true })
   googleId?: string;
+
+  @Prop({ required: true, enum: ['user', 'admin'], default: 'user' })
+  role: string;
 
   @Prop({ default: Date.now })
   createdAt: Date;
