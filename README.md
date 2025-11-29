@@ -112,11 +112,6 @@ API available at: **http://localhost:3000/api**
    POST /api/game/submit { won: true, attempts: 3 }
 ```
 
-**Why server-side validation?**
-- 🛡️ Prevents cheating (word stays secret)
-- ✅ Consistent validation across all clients
-- 📊 Track all guesses for analytics
-
 ## 🔧 Tech Stack
 
 - **Framework:** NestJS 11.x
@@ -215,14 +210,10 @@ curl -X POST http://localhost:3000/api/game/validate \
 
 Contributions are welcome! Feel free to submit a Pull Request.
 
-## 📝 License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ## 🐛 Issues
 
 Found a bug? [Open an issue](https://github.com/your-username/sportdle/issues)
 
----
+## 📝 License
 
-Built with ❤️ using NestJS
+This project is licensed under the [MIT License](LICENSE).
